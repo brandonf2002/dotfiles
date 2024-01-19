@@ -1,0 +1,61 @@
+Config {
+    -- font = "xft:Comic Mono-9"
+    font = "xft:Symbols Nerd Font Mono-12"
+    , additionalFonts = [
+        "xft:Symbols Nerd Font Mono-12"
+    ]
+    , bgColor = "#191724"
+    , fgColor = "#e0def4"
+    , position = TopSize L 100 20
+    , commands = [
+        -- Gather and format CPU usage information.
+        -- If it's above 50%, we consider it high usage and make it red.
+        Run Cpu [
+            -- "-t", "\x0ee0",
+            "-t", "\xf09d1 <total>%",
+            "-L", "15",
+            "-H", "50",
+            "--normal", "green",
+            "--high","red"
+        ]
+        10,
+
+        Run Network "wlan0" [
+            "-L", "0",
+            "-H", "32",
+            "--normal", "green",
+            "--high","red"
+        ] 10,
+
+        -- Gather and format memory usage information
+        Run Memory [
+            "-t","\xf035b <usedratio>%"
+        ] 10,
+
+        -- Date formatting
+        Run DateZone "%a %d %b %Y - %H:%M:%S" "en_GB.UTF-8" "Europe/London" "date" 10,
+
+        -- Battery information. This is likely to require some customization
+        -- based upon your specific hardware. Or, for a desktop you may want
+        -- to just remove this section entirely.
+        Run Battery [
+            "-t", "<acstatus>: <left>% - <timeleft>",
+            "--",
+            --"-c", "charge_full",
+            "-O", "AC",
+            "-o", "Bat",
+            "-h", "green",
+            "-l", "red"
+        ] 10,
+
+        Run Com "/bin/bash" ["-c", "/home/brandon/scripts/volume_read.sh"]  "myvolume" 1,
+        Run Com "/bin/bash" ["-c", "/home/brandon/scripts/brightness_read.sh"]  "mybright" 1,
+
+        --Run Weather "KNYC" ["-t", "KNYC: <tempC>C/<skyCondition>"] 36000,
+
+        Run StdinReader
+    ]
+    , sepChar = "%"
+    , alignSep = "}{"
+    , template = "<fn=1>%StdinReader%</fn> }{ %wlan0% • %battery% • %cpu% • %memory% • %myvolume% • %mybright% • <fc=#e6744c>%date%</fc>"
+}
